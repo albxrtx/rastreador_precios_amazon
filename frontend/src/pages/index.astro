@@ -1,0 +1,23 @@
+---
+import "../styles/global.css";
+import Layout from "../layouts/Layout.astro";
+
+// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
+// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+---
+
+<Layout>
+  <form action="" class="w-[30%]">
+    <h1>Introduce la URL del producto para comenzar</h1>
+    <div class="w-full flex gap-3">
+      <input
+        class="border p-2 rounded w-full"
+        type="text"
+        placeholder="url del producto"
+      />
+      <button class="bg-amber-500 border border-amber-500 px-4 py-2 rounded"
+        >Buscar</button
+      >
+    </div>
+  </form>
+</Layout>
