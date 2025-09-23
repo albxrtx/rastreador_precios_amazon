@@ -1,14 +1,15 @@
 ---
 import "../styles/global.css";
 import Layout from "../layouts/Layout.astro";
+import ProductCard from "../components/ProductCard.astro";
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
 <Layout>
-  <form action="" class="w-[30%]">
-    <h1>Introduce la URL del producto para comenzar</h1>
+  <form action="" class="w-[30%] flex flex-col gap-2">
+    <h1 class="text-2xl">Introduce la URL del producto para comenzar</h1>
     <div class="w-full flex gap-3">
       <input
         class="border p-2 rounded w-full"
@@ -20,4 +21,5 @@ import Layout from "../layouts/Layout.astro";
       >
     </div>
   </form>
+  <ProductCard />
 </Layout>
