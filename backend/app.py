@@ -29,9 +29,9 @@ def scrape_product():
     if title:
         title = title.get_text(strip=True)
 
-    price = soup.find("span", {"class": "a-price-whole"})
-    if price:
-        price = price.get_text(strip=True)
+    price_whole = soup.find("span", {"class": "a-price-whole"})
+    if price_whole:
+        price_whole = price_whole.get_text(strip=True)
 
     price_fraction = soup.find("span", {"class": "a-price-fraction"})
     if price_fraction:
@@ -41,7 +41,7 @@ def scrape_product():
     if img_url:
         img_url = img_url.get("src")
 
-    total_price = price + price_fraction
+    total_price = price_whole + price_fraction
     return jsonify({"title": title, "price": total_price, "img_url": img_url})
 
 
