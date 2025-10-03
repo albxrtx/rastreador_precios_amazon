@@ -44,17 +44,22 @@ import Modal from "../components/Modal.astro";
     const form = document.getElementById("productForm");
     const input = document.getElementById("url") as HTMLInputElement;
     const container = document.querySelector(".productCard");
+
     form?.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const url = input.value;
 
       try {
-        const res = await fetch("http://127.0.0.1:5000/api/scrape", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url }),
-        });
+        const res = await fetch(
+          // "https://rastreador-precios-amazon.onrender.com/api/scrape",
+          "http://127.0.0.1:5000/api/scrape",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url }),
+          }
+        );
 
         const data = await res.json();
 
@@ -64,7 +69,7 @@ import Modal from "../components/Modal.astro";
               src="${data.img_url}"
               alt="Imagen del producto"
             />
-          <div class="flex flex-col items-start gap-2">
+          <div class="flex flex-col justify-start gap-2">
             <h2 class="font-bold">${data.title}</h2>
             <span class="font-bold">${data.price} €</span>
             <div class="flex flex-col gap-3">
