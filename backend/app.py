@@ -1,6 +1,4 @@
 from flask import Flask, request, jsonify
-from bs4 import BeautifulSoup
-import requests
 from flask_cors import CORS
 from scrapper import web_scrapper
 
@@ -12,6 +10,7 @@ CORS(app)
 def scrape_product():
     data = request.get_json()
     url = data.get("url")
+
     product_data = web_scrapper(url)
     return jsonify(product_data)
 
