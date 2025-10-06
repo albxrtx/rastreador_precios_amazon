@@ -29,10 +29,6 @@ import Modal from "../components/Modal.astro";
         placeholder="url del producto"
         required
       />
-      <!-- <button
-        class="bg-amber-500 border border-amber-500 hover:bg-amber-600 px-4 py-2 rounded"
-        type="submit">Buscar</button
-      > -->
       <button
         class="bg-amber-500 border border-amber-500 hover:bg-amber-600 px-4 py-2 rounded"
         type="reset">Reiniciar</button
@@ -45,12 +41,14 @@ import Modal from "../components/Modal.astro";
   </div>
 
   <script>
-    const input = document.getElementById("url") as HTMLInputElement;
+    // Peticion para obtener el producto
+
+    const productInput = document.getElementById("url") as HTMLInputElement;
     const container = document.querySelector(".productCard");
     let timeout: number | undefined;
 
-    input.addEventListener("input", async () => {
-      const url = input.value;
+    productInput.addEventListener("input", async () => {
+      const url = productInput.value;
 
       if (!url) return;
 
@@ -85,14 +83,17 @@ import Modal from "../components/Modal.astro";
             <span class="font-bold">${data.price} €</span>
             <div class="flex flex-col gap-3">
               <h2 class="text-gray-500">¿Quieres recibir un correo cuando el precio disminuya?</h2>
-              <form class="w-full flex gap-4">
+              <form id="emailForm" class="w-full flex gap-4">
                 <input
+                id="userEmail"
+                name="userEmail"
                 class="w-full border px-2 py-1 rounded"
                 type="email"
                 placeholder="correo@electronico.com"
                 required
                 />
                 <button
+                id="sendEmailButton"
                 class="bg-amber-500 border border-amber-500 hover:bg-amber-600 px-4 py-2 rounded"
                 type="submit">Recibir</button>
                 </form>
@@ -100,6 +101,37 @@ import Modal from "../components/Modal.astro";
                 </div>
                 </div>
               `;
+
+        const emailInput = document.getElementById(
+          "userEmail"
+        ) as HTMLInputElement;
+        const emailForm = document.getElementById(
+          "emailForm"
+        ) as HTMLFormElement;
+
+        emailForm?.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const userEmail = emailInput.value;
+          try {
+            const res = await fetch(
+              // "https://rastreador-precios-amazon.onrender.com/api/email_sender",
+              "http://127.0.0.1:5000/api/email_sender",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userEmail }),
+              }
+            );
+
+            if (res.ok) {
+              console.log("Email enviado con exito");
+            } else {
+              console.log("No se pudo enviar el email");
+            }
+          } catch (error) {
+            console.log("Algo ha salido mal:", error);
+          }
+        });
       } catch (error) {
         container!.innerHTML = `
           <span class="bg-red-200 w-full p-4 rounded text-red-500 font-bold border-2 border-red-500" >
@@ -109,8 +141,9 @@ import Modal from "../components/Modal.astro";
       }
     }
 
-    const btnModal = document.getElementById("btnModal");
+    // Boton para mostrar/ocultar el modal
     const modal = document.getElementById("modal");
+    const btnModal = document.getElementById("btnModal");
     const closeModal = document.getElementById("closeModal");
 
     btnModal?.addEventListener("click", () => {
