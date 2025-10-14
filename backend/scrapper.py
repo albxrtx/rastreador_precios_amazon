@@ -2,48 +2,54 @@ from bs4 import BeautifulSoup
 import requests
 from flask import jsonify, request
 import random
+import os
+
+API_KEY = os.getenv("SCRAPER_API_KEY")
+API_URL = os.getenv("SCRAPER_API_URL")
 
 
 def web_scrapper(url):
-    if not url.startswith("http"):
-        url = "https://" + url
+    try:
 
-    USER_AGENTS = [
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3 Safari/605.1.15",
-        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    ]
+        if not url.startswith("http"):
+            url = "https://" + url
 
-    headers = {
-        "User-Agent": random.choice(USER_AGENTS),
-        "Accept-Language": "es-ES,es;q=0.9,en;q=0.8",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "DNT": "1",
-        "Connection": "keep-alive",
-    }
+        params = {"api_key": API_KEY, "url": url, "country_code": "es", "render": True}
 
-    response = requests.get(url, headers=headers)
+        response = requests.get(API_URL, params=params, timeout=30)
 
-    # print(response.status_code)
-    # print(response.text[:500])
+        if response.status_code != 200:
+            return {"error": "Error al acceder a la página"}
 
-    soup = BeautifulSoup(response.content, "html.parser")
+        soup = BeautifulSoup(response.content, "html.parser")
 
-    title = soup.find("span", {"id": "productTitle"})
-    title = title.get_text(strip=True) if title else ""
+        title = soup.find("span", {"id": "productTitle"})
+        title = title.get_text(strip=True) if title else "Titulo no disponible"
 
-    price_whole = soup.find("span", {"class": "a-price-whole"})
-    price_whole = price_whole.get_text(strip=True) if price_whole else ""
+        price_whole = soup.find("span", {"class": "a-price-whole"})
+        price_whole = (
+            price_whole.get_text(strip=True) if price_whole else "Precio no disponible"
+        )
 
-    price_fraction = soup.find("span", {"class": "a-price-fraction"})
-    price_fraction = price_fraction.get_text(strip=True) if price_fraction else ""
+        price_fraction = soup.find("span", {"class": "a-price-fraction"})
+        price_fraction = (
+            price_fraction.get_text(strip=True)
+            if price_fraction
+            else "Precio no disponible"
+        )
 
-    img_url = soup.find("img", {"id": "landingImage"})
-    img_url = img_url.get("src") if img_url else ""
+        img_url = soup.find("img", {"id": "landingImage"})
+        img_url = img_url.get("src") if img_url else "Url de imagen no disponible"
 
-    total_price = (price_whole + price_fraction).strip()
-    if not total_price:
-        total_price = "Precio no disponible"
+        total_price = (price_whole + price_fraction).strip()
+        if not total_price:
+            total_price = "Precio no disponible"
 
-    return {"title": title, "price": total_price, "img_url": img_url}
+        return {"title": title, "price": total_price, "img_url": img_url}
+    except Exception as e:
+        return {
+            "error": str(e),
+            "title": "Error al obtener datos",
+            "price": "0",
+            "img_url": "",
+        }

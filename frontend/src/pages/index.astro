@@ -2,89 +2,29 @@
 import "../styles/global.css";
 import Layout from "../layouts/Layout.astro";
 import Modal from "../components/Modal.astro";
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import ProductForm from "../components/ProductForm.astro";
+import ProductCard from "../components/ProductCard.astro";
+import Footer from "../components/Footer.astro";
 ---
 
 <Layout>
   <Modal />
-  <button
-    id="btnModal"
-    class="absolute right-0 top-0 m-7 bg-gray-100 hover:bg-gray-300 transition size-8 rounded flex items-center justify-center"
-    >?</button
-  >
-  <form
-    id="productForm"
-    action=""
-    class="w-[80%] md:w-[70%] lg:w-[40%] flex flex-col gap-2"
-  >
-    <h1 class="text-2xl">🔗 Introduce la URL del producto para comenzar</h1>
-    <div class="w-full flex gap-3">
-      <input
-        id="url"
-        name="url"
-        class="border p-2 rounded w-full"
-        type="text"
-        placeholder="url del producto"
-        required
-      />
-      <button
-        id="resetButton"
-        class="bg-amber-500 border border-amber-500 hover:bg-amber-600 px-4 py-2 rounded"
-        type="reset">Reiniciar</button
-      >
-    </div>
-  </form>
-  <div
-    class="productCard hidden flex items-center justify-center w-[80%] md:w-[70%] lg:w-[40%] text-center"
-  >
-    <div
-      class="w-full p-2 border border-gray-500 rounded flex flex-col md:flex-row items-center gap-4"
+  <div class="w-full flex flex-col gap-8 flex-1 items-center justify-center">
+    <button
+      id="btnModal"
+      class="absolute right-0 top-0 m-7 shadow-md shadow-stone-400 bg-gray-100 hover:bg-gray-300 transition size-8 rounded flex items-center justify-center"
+      >?</button
     >
-      <img
-        id="productImage"
-        class="size-[50%] md:h-full lg:h-full lg:w-[40%] aspect-square"
-        src=""
-        alt="Imagen del producto"
-      />
-      <div class="flex flex-col justify-start gap-2">
-        <h2 id="productTitle" class="font-bold"></h2>
-        <span id="productPrice" class="font-bold"></span>
-        <div class="flex flex-col gap-3">
-          <h2 class="text-gray-500">
-            ¿Quieres recibir un correo cuando el precio disminuya?
-          </h2>
-          <div id="emailContainer">
-            <form id="emailForm" class="w-full">
-              <div class="flex flex-col items-start gap-2">
-                <span
-                  id="emailMessage"
-                  class="hidden text-[0.9rem] w-full p-2 bg-red-300 text-red-700 border-2 border-red-700 font-semibold rounded text-center"
-                  >Algo ha salido mal, intentalo de nuevo más tarde
-                </span>
-                <div class="flex w-full gap-4">
-                  <input
-                    id="userEmail"
-                    name="userEmail"
-                    class="w-full border px-2 py-1 rounded"
-                    type="email"
-                    placeholder="correo@electronico.com"
-                    required
-                  />
-                  <button
-                    id="sendEmailButton"
-                    class="bg-amber-500 border border-amber-500 hover:bg-amber-600 px-4 py-2 rounded"
-                    type="submit">Recibir</button
-                  >
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
+    <ProductForm />
+    <div
+      class="hidden productCard flex items-center justify-center
+    w-[80%] md:w-[70%] lg:w-[40%] text-center"
+    >
+      <ProductCard />
     </div>
   </div>
+
+  <Footer />
 
   <script>
     import "../scripts/index.ts";

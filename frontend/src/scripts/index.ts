@@ -1,4 +1,6 @@
-const productInput = document.getElementById("url") as HTMLInputElement;
+const productInput = document.getElementById(
+  "productInput"
+) as HTMLInputElement;
 const container = document.querySelector(".productCard") as HTMLDivElement;
 
 const productImg = document.getElementById("productImage") as HTMLImageElement;
@@ -17,8 +19,9 @@ const emailForm = document.getElementById("emailForm") as HTMLFormElement;
 const sendEmailButton = document.getElementById(
   "sendEmailButton"
 ) as HTMLButtonElement;
-const emailMessage = document.getElementById("emailMessage") as HTMLSpanElement;
 
+const emailMessage = document.getElementById("emailMessage") as HTMLSpanElement;
+const inputMessage = document.getElementById("inputMessage") as HTMLSpanElement;
 let timeout: number | undefined;
 
 // Escucha cambios en el input de producto
@@ -29,8 +32,29 @@ productInput.addEventListener("input", () => {
   if (timeout) clearTimeout(timeout);
   timeout = window.setTimeout(() => {
     fetchProduct(url);
+    inputDisabled();
   }, 1000);
 });
+
+function inputDisabled(): void {
+  let timer = 11;
+  productInput.disabled = true;
+
+  const interval = setInterval(() => {
+    inputMessage.classList.remove("hidden");
+    timer--;
+    inputMessage.textContent =
+      "Espera " + timer + " segundos para volver a escribir";
+  }, 1000);
+
+  setTimeout(() => {
+    inputMessage.classList.add("hidden");
+    clearInterval(interval);
+
+    productInput.disabled = false;
+    inputMessage.textContent = "";
+  }, 10000);
+}
 
 function isValid(email: string): boolean {
   const regex =
@@ -39,7 +63,6 @@ function isValid(email: string): boolean {
 }
 
 async function fetchProduct(url: string): Promise<void> {
-  // Reset estado del mensaje y botón de email
   emailMessage.textContent = "";
 
   try {
@@ -59,6 +82,12 @@ async function fetchProduct(url: string): Promise<void> {
     container.classList.remove("hidden");
   } catch (error) {
     console.error("Error al scrapear:", error);
+    container.classList.remove("hidden");
+    container.innerHTML = `
+        <div class="w-full p-2 bg-red-300 text-red-800 border-red-800 border-2 font-semibold rounded text-center">
+          Hubo un error al obtener el producto. Vuelve a intentarlo más tarde.
+        </div>
+        `;
   }
 }
 
@@ -66,6 +95,11 @@ async function fetchProduct(url: string): Promise<void> {
 emailForm?.addEventListener("submit", async (e: Event) => {
   e.preventDefault();
   const userEmail = emailInput.value;
+  const productUrl = productInput.value;
+  const currentPrice = productPrice?.textContent
+    .replace("€", "")
+    .replace(",", ".")
+    .trim();
 
   if (!isValid(userEmail)) {
     emailMessage.classList.remove("hidden");
@@ -77,7 +111,11 @@ emailForm?.addEventListener("submit", async (e: Event) => {
     const res = await fetch("http://127.0.0.1:5000/api/email_sender", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userEmail }),
+      body: JSON.stringify({
+        userEmail,
+        productUrl,
+        productPrice: currentPrice,
+      }),
     });
 
     if (res.ok) {
@@ -87,6 +125,7 @@ emailForm?.addEventListener("submit", async (e: Event) => {
         </div>
         `;
     } else {
+      emailMessage.textContent = "Algo ha salido mal";
       emailMessage.style.display = "flex";
     }
   } catch (error) {

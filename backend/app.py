@@ -3,7 +3,7 @@ from flask_cors import CORS
 from scrapper import web_scrapper
 from email_sender import send_email
 from dotenv import load_dotenv
-import os
+from backend.supabase_utils import save_user
 
 load_dotenv()
 
@@ -24,8 +24,13 @@ def scrape_product():
 def email_sender():
     data = request.get_json()
     user_email = data.get("userEmail")
+    product_url = data.get("productUrl")
+    product_price = data.get("productPrice")
+    current_price = float(product_price)
+
     try:
         send_email(user_email)
+        save_user(user_email, product_url, current_price)
         return {"message": "Email enviado con éxito"}, 200
     except Exception as e:
         return {"error": str(e)}, 500
