@@ -1,70 +1,79 @@
-const productInput = document.getElementById(
-  "productInput"
+// Input de producto
+const searchProductInput = document.getElementById(
+  "search-product-input"
 ) as HTMLInputElement;
-const container = document.querySelector(".productCard") as HTMLDivElement;
-
-const productImg = document.getElementById("productImage") as HTMLImageElement;
-const productTitle = document.getElementById(
-  "productTitle"
-) as HTMLElement | null;
-const productPrice = document.getElementById(
-  "productPrice"
-) as HTMLElement | null;
-
-const emailContainer = document.getElementById(
-  "emailContainer"
+// Contenedor del producto
+const productCardContainer = document.getElementById(
+  "product-card-container"
 ) as HTMLDivElement;
-const emailInput = document.getElementById("userEmail") as HTMLInputElement;
-const emailForm = document.getElementById("emailForm") as HTMLFormElement;
+
+// Elementos del producto
+const productImage = document.getElementById(
+  "product-image"
+) as HTMLImageElement;
+const productTitle = document.getElementById("product-title") as HTMLElement;
+const productPrice = document.getElementById("product-price") as HTMLElement;
+
+// Contenedor del email
+const emailContainer = document.getElementById(
+  "email-container"
+) as HTMLDivElement;
+
+// Elementos del formulario de email
+const emailForm = document.getElementById("email-form") as HTMLFormElement;
+
+const emailInput = document.getElementById("user-email") as HTMLInputElement;
 const sendEmailButton = document.getElementById(
-  "sendEmailButton"
+  "send-email-button"
 ) as HTMLButtonElement;
 
-const emailMessage = document.getElementById("emailMessage") as HTMLSpanElement;
-const inputMessage = document.getElementById("inputMessage") as HTMLSpanElement;
-let timeout: number | undefined;
+const emailAlert = document.getElementById("email-alert") as HTMLSpanElement;
+const searchProductAlert = document.getElementById(
+  "search-product-alert"
+) as HTMLSpanElement;
 
-// Escucha cambios en el input de producto
-productInput.addEventListener("input", () => {
-  const url = productInput.value;
-  if (!url) return;
-
-  if (timeout) clearTimeout(timeout);
-  timeout = window.setTimeout(() => {
-    fetchProduct(url);
-    inputDisabled();
-  }, 1000);
-});
-
+// Función para deshabilitar el input durante 10 segundos
 function inputDisabled(): void {
   let timer = 11;
-  productInput.disabled = true;
+  // Deshabilitar el input
+  searchProductInput.disabled = true;
 
+  // Mostrar alerta y temporizador
   const interval = setInterval(() => {
-    inputMessage.classList.remove("hidden");
+    searchProductAlert.classList.remove("hidden");
     timer--;
-    inputMessage.textContent =
-      "Espera " + timer + " segundos para volver a escribir";
+    searchProductAlert.textContent = `Espera ${timer} segundos para volver a escribir`;
   }, 1000);
 
+  // Habilitar el input después de 10 segundos
   setTimeout(() => {
-    inputMessage.classList.add("hidden");
+    searchProductAlert.classList.add("hidden");
+    searchProductAlert.textContent = "";
     clearInterval(interval);
-
-    productInput.disabled = false;
-    inputMessage.textContent = "";
+    searchProductInput.disabled = false;
   }, 10000);
 }
 
+// Función para validar el correo electrónico
 function isValid(email: string): boolean {
   const regex =
     /^[a-zA-Z0-9]+([._%+-]?[a-zA-Z0-9]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$/;
   return regex.test(email);
 }
 
-async function fetchProduct(url: string): Promise<void> {
-  emailMessage.textContent = "";
+// Escucha cambios en el input de producto
+searchProductInput.addEventListener("input", () => {
+  const productUrl = searchProductInput.value;
+  if (!productUrl) return;
 
+  setTimeout(() => {
+    fetchProduct(productUrl);
+    inputDisabled();
+  }, 1000);
+});
+
+// Función para scrapear el producto
+async function fetchProduct(url: string): Promise<void> {
   try {
     const res = await fetch("http://127.0.0.1:5000/api/scrape", {
       method: "POST",
@@ -77,13 +86,13 @@ async function fetchProduct(url: string): Promise<void> {
 
     if (productTitle) productTitle.textContent = data.title;
     if (productPrice) productPrice.textContent = data.price + " €";
-    if (productImg) productImg.src = data.img_url;
+    if (productImage) productImage.src = data.img_url;
 
-    container.classList.remove("hidden");
+    productCardContainer.classList.remove("hidden");
   } catch (error) {
     console.error("Error al scrapear:", error);
-    container.classList.remove("hidden");
-    container.innerHTML = `
+    productCardContainer.classList.remove("hidden");
+    productCardContainer.innerHTML = `
         <div class="w-full p-2 bg-red-300 text-red-800 border-red-800 border-2 font-semibold rounded text-center">
           Hubo un error al obtener el producto. Vuelve a intentarlo más tarde.
         </div>
@@ -92,18 +101,18 @@ async function fetchProduct(url: string): Promise<void> {
 }
 
 // Envío del formulario de correo
-emailForm?.addEventListener("submit", async (e: Event) => {
-  e.preventDefault();
+emailForm?.addEventListener("submit", async (event: Event) => {
+  event.preventDefault();
   const userEmail = emailInput.value;
-  const productUrl = productInput.value;
+  const productUrl = searchProductInput.value;
   const currentPrice = productPrice?.textContent
     .replace("€", "")
     .replace(",", ".")
     .trim();
 
   if (!isValid(userEmail)) {
-    emailMessage.classList.remove("hidden");
-    emailMessage.textContent = "Por favor, introduce un correo válido";
+    emailAlert.classList.remove("hidden");
+    emailAlert.textContent = "Por favor, introduce un correo válido";
     return;
   }
 
@@ -125,8 +134,8 @@ emailForm?.addEventListener("submit", async (e: Event) => {
         </div>
         `;
     } else {
-      emailMessage.textContent = "Algo ha salido mal";
-      emailMessage.style.display = "flex";
+      emailAlert.textContent = "Algo ha salido mal";
+      emailAlert.style.display = "flex";
     }
   } catch (error) {
     console.error("Algo ha salido mal:", error);
@@ -134,23 +143,34 @@ emailForm?.addEventListener("submit", async (e: Event) => {
 });
 
 // Resetear la tarjeta del producto
-const resetButton = document.getElementById("resetButton") as HTMLButtonElement;
-resetButton?.addEventListener("click", () => {
-  if (productTitle) productTitle.textContent = "";
-  if (productPrice) productPrice.textContent = "";
-  if (productImg) productImg.src = "";
-  container.classList.add("hidden");
+const resetFormButton = document.getElementById(
+  "reset-form-button"
+) as HTMLButtonElement;
+
+resetFormButton?.addEventListener("click", () => {
+  window.location.reload();
 });
 
-// Modal
-const modal = document.getElementById("modal") as HTMLElement;
-const btnModal = document.getElementById("btnModal") as HTMLButtonElement;
-const closeModal = document.getElementById("closeModal") as HTMLButtonElement;
+// Funcionalidad del modal
+const modal = document.getElementById("info-modal") as HTMLElement;
+const showModalButton = document.getElementById(
+  "show-modal-button"
+) as HTMLButtonElement;
+const closeModalButton = document.getElementById(
+  "close-modal-button"
+) as HTMLButtonElement;
 
-btnModal?.addEventListener("click", () => {
+showModalButton?.addEventListener("click", () => {
   modal?.classList.remove("hidden");
 });
 
-closeModal?.addEventListener("click", () => {
+closeModalButton?.addEventListener("click", () => {
   modal?.classList.add("hidden");
+});
+
+// Cerrar modal con Escape
+window.addEventListener("keydown", (event: Event) => {
+  if ((event as KeyboardEvent).key === "Escape") {
+    modal?.classList.add("hidden");
+  }
 });

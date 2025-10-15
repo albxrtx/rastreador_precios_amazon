@@ -11,13 +11,14 @@ import Footer from "../components/Footer.astro";
   <Modal />
   <div class="w-full flex flex-col gap-8 flex-1 items-center justify-center">
     <button
-      id="btnModal"
+      id="show-modal-button"
       class="absolute right-0 top-0 m-7 shadow-md shadow-stone-400 bg-gray-100 hover:bg-gray-300 transition size-8 rounded flex items-center justify-center"
       >?</button
     >
     <ProductForm />
     <div
-      class="hidden productCard flex items-center justify-center
+      id="product-card-container"
+      class="hidden items-center justify-center
     w-[80%] md:w-[70%] lg:w-[40%] text-center"
     >
       <ProductCard />

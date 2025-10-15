@@ -1,18 +1,18 @@
 <form
-  id="productForm"
   action=""
+  id="search-product-form"
   class="w-[80%] md:w-[70%] lg:w-[40%] flex flex-col gap-2"
 >
   <h1 class="text-2xl">🔗 Introduce la URL del producto para comenzar</h1>
 
   <div class="flex flex-col w-full gap-2">
     <span
-      id="inputMessage"
+      id="search-product-alert"
       class="hidden text-[0.9rem] w-full p-2 bg-yellow-50 text-yellow-800 border-2 border-yellow-400 font-semibold rounded text-center"
     ></span>
     <div class="w-full flex gap-3">
       <input
-        id="productInput"
+        id="search-product-input"
         name="url"
         class="border p-2 rounded w-full shadow-md shadow-stone-400"
         type="text"
@@ -20,7 +20,7 @@
         required
       />
       <button
-        id="resetButton"
+        id="reset-form-button"
         class="shadow-md shadow-stone-400 transition bg-amber-500 border border-amber-500 hover:bg-amber-600 px-4 py-2 rounded"
         type="reset">Reiniciar</button
       >

@@ -3,7 +3,7 @@ from flask_cors import CORS
 from scrapper import web_scrapper
 from email_sender import send_email
 from dotenv import load_dotenv
-from backend.supabase_utils import save_user
+from supabase_utils import save_user
 
 load_dotenv()
 
